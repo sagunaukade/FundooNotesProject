@@ -36,6 +36,42 @@ namespace FundooNotes.Controllers
                 throw;
             }
         }
+        [HttpPost("Login")]
+        public IActionResult Login(UserLogin userLogin)
+        {
+            try
+            {
+                var result = userBL.Login(userLogin);
+                if(result!=null)
+                    return this.Ok(new { success = true, message = "Login successfull", data = result });
+                else
+                    return this.BadRequest(new { success = false, message = "Login unsuccessfull" });
+
+            }
+            catch (Exception)
+            {
+
+                
+                throw;
+            }
+        }
+        //Forget Password
+        [HttpPost("ForgetPassword")]
+        public IActionResult ForgetPassword(string email)
+        {
+            try
+            {
+                var user = userBL.ForgetPassword(email);
+                if (user != null)
+                    return this.Ok(new { Success = true, message = " Email sent Successfully ", data = user });
+                else
+                    return this.BadRequest(new { Success = false, message = "Email not sent" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
     }
 }

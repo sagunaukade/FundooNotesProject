@@ -21,7 +21,7 @@ namespace BusinessLayer.Service
         {
             try
             {
-                return userRL.Resistration(User);
+                return userRL.Registration(User);
             }
             catch (Exception)
             {
@@ -29,6 +29,22 @@ namespace BusinessLayer.Service
                 throw;
             }
         }
+        public string Login(UserLogin userLogin)
+        {
+            try
+            {
+                return userRL.Login(userLogin);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public string ForgetPassword(string email)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
-      
