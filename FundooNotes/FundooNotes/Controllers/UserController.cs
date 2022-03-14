@@ -1,11 +1,7 @@
 ﻿using BusinessLayer.Interface;
 using CommonLayer.Model;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace FundooNotes.Controllers
 {
@@ -17,20 +13,22 @@ namespace FundooNotes.Controllers
         public UserController(IUserBL userBL)
         {
             this.userBL = userBL;
+
         }
-        [HttpPost ("Register")]
+        [HttpPost("Register")]
         public IActionResult Registration(UserRegistration user)
         {
             try
             {
                 var result = userBL.Registration(user);
                 if (result != null)
-                    return this.Ok(new { success = true, message = "Registration successfull", data = result });
+                    return this.Ok(new { success = true, message = "Registration successful", data = result });
                 else
-                    return this.BadRequest(new { success = false, message = "Registration unsuccessfull" });
+                    return this.BadRequest(new { success = false, message = "Registration unsuccessful" });
+
 
             }
-            catch (Exception)
+            catch (System.Exception)
             {
 
                 throw;
@@ -42,36 +40,58 @@ namespace FundooNotes.Controllers
             try
             {
                 var result = userBL.Login(userLogin);
-                if(result!=null)
-                    return this.Ok(new { success = true, message = "Login successfull", data = result });
+                if (result != null)
+                    return this.Ok(new { success = true, message = "Login successful", data = result });
                 else
-                    return this.BadRequest(new { success = false, message = "Login unsuccessfull" });
-
+                    return this.BadRequest(new { success = false, message = "Login unsuccessful" });
             }
-            catch (Exception)
+            catch (System.Exception)
             {
 
-                
                 throw;
             }
         }
-        //Forget Password
-        [HttpPost("ForgetPassword")]
+        [HttpPost("forgotPassword")]
         public IActionResult ForgetPassword(string email)
         {
             try
             {
-                var user = userBL.ForgetPassword(email);
-                if (user != null)
-                    return this.Ok(new { Success = true, message = " Email sent Successfully ", data = user });
+                var result = userBL.ForgetPassword(email);
+                if (result != null)
+                    return this.Ok(new { success = true, message = "mail sent  successful" });
                 else
-                    return this.BadRequest(new { Success = false, message = "Email not sent" });
+                    return this.BadRequest(new { success = false, message = "enter valid email" });
+
             }
-            catch (Exception)
+            catch (System.Exception)
             {
+
                 throw;
             }
         }
+        [HttpPut("ResetPassword")]
+        public IActionResult ResetPassword(string password, string confirmpassword)
+        {
+            try
+            {
+                var email = User.FindFirst(ClaimTypes.Email).Value.ToString();
+                var user = userBL.ResetPassword(email, password, confirmpassword);
+                if (!user)
+                {
+                    return this.BadRequest(new { success = false, message = "enter valid password" });
 
+                }
+                else
+                {
+                    return this.Ok(new { success = true, message = "reset password is successfully" });
+                }
+
+            }
+            catch (System.Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

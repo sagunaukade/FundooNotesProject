@@ -16,11 +16,8 @@ namespace RepositoryLayer.Service
 {
     public class UserRL : IUserRL
     {
-        //instance variable
         private readonly FundooContext fundooContext;
         private readonly IConfiguration _Toolsettings;
-        private object userRL;
-        //constructor
         public UserRL(FundooContext fundooContext, IConfiguration _Toolsettings)
         {
             this.fundooContext = fundooContext;
@@ -28,7 +25,6 @@ namespace RepositoryLayer.Service
 
         }
 
-        //public UserEntity Resistration(UserRegistration User);
         public UserEntity Registration(UserRegistration User)
         {
             try
@@ -52,13 +48,10 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
-        // public UserEntity Resistration(UserRegistration User);
-        //public string Login(UserLogin userLogin);
         public string Login(UserLogin userLogin)
         {
             try
             {
-                //linq query to match the input in database
                 var user = fundooContext.User.Where(x => x.Email == userLogin.Email && x.Password == userLogin.Password).FirstOrDefault();
                 if (user != null)
                 {
@@ -67,6 +60,8 @@ namespace RepositoryLayer.Service
 
                 }
                 return null;
+                //string token = GenerateSecurityToken(user.Email, user.Id);
+                //return token;
             }
             catch (Exception)
             {
@@ -105,6 +100,28 @@ namespace RepositoryLayer.Service
                 return null;
             }
         }
+        public bool ResetPassword(string email, string password, string confirmpassword)
+        {
+            try
+            {
+                if (password.Equals(confirmpassword))
+                {
+                    var user = fundooContext.User.Where(x => x.Email == email).FirstOrDefault();
+                    user.Password = confirmpassword;
+                    fundooContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
 
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

@@ -3,25 +3,23 @@ using CommonLayer.Model;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace BusinessLayer.Service
+namespace Businesslayer.Service
 {
     public class UserBL : IUserBL
     {
         private readonly IUserRL userRL;
-
         public UserBL(IUserRL userRL)
         {
             this.userRL = userRL;
-
         }
-        public UserEntity Registration(UserRegistration User)
+
+        public string Login(UserLogin userLogin)
         {
             try
             {
-                return userRL.Registration(User);
+                return userRL.Login(userLogin);
+
             }
             catch (Exception)
             {
@@ -29,11 +27,13 @@ namespace BusinessLayer.Service
                 throw;
             }
         }
-        public string Login(UserLogin userLogin)
+
+        public UserEntity Registration(UserRegistration user)
         {
             try
             {
-                return userRL.Login(userLogin);
+                return userRL.Registration(user);
+
             }
             catch (Exception)
             {
@@ -44,7 +44,32 @@ namespace BusinessLayer.Service
 
         public string ForgetPassword(string email)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return userRL.ForgetPassword(email);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool ResetPassword(string email, string password, string confirmpassword)
+        {
+            try
+            {
+
+                return userRL.ResetPassword(email, password, confirmpassword);
+
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
         }
     }
 }
