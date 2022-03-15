@@ -1,4 +1,5 @@
 ﻿using CommonLayer.Model;
+using Microsoft.AspNetCore.Http;
 using RepositoryLayer.Entity;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,10 @@ namespace BusinessLayer.Interface
         public NotesEntity UpdateNotes(UpdateNotes updateNotes, long notesId);
         public bool DeleteNotes(long id, long noteId);
         public IEnumerable<NotesEntity> RetrieveAllNotes(long userId);
+        public NotesEntity ArchiveNotes(long userId, long notesId);
+        public NotesEntity PinnedNotes(long userId, long notesId);
+        public NotesEntity ColorNotes(long userId, long notesId, string color);
+        public NotesEntity TrashNotes(long userId, long notesId);
 
 
 

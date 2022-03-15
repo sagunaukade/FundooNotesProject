@@ -16,7 +16,6 @@ namespace BusinessLayer.Service
         {
             this.notesRL = notesRL;
         }
-        //Method to return create note obj to Repository Layer notes.
         public NotesEntity NotesCreation(NotesCreation notesCreation, long notesId)
         {
             try
@@ -41,7 +40,7 @@ namespace BusinessLayer.Service
             {
 
                 throw;
-            } 
+            }
         }
         public bool DeleteNotes(long id, long noteId)
         {
@@ -70,7 +69,52 @@ namespace BusinessLayer.Service
                 throw;
             }
         }
+        public NotesEntity ArchiveNotes(long userId, long notesId)
+        {
+            try
+            {
+                return this.notesRL.ArchiveNotes(userId, notesId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public NotesEntity PinnedNotes(long userId, long notesId)
+        {
+            try
+            {
+                return this.notesRL.PinnedNotes(userId, notesId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity ColorNotes(long userId, long notesId, string color)
+        {
+            try
+            {
+                return this.notesRL.ColorNotes(userId, notesId, color);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity TrashNotes(long userId, long notesId)
+        {
+            try
+            {
+                return this.notesRL.TrashNotes(userId, notesId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+       
     }
 }
 
-   

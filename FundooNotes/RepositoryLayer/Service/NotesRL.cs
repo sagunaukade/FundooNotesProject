@@ -1,5 +1,8 @@
-﻿using CommonLayer.Model;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using CommonLayer.Model;
 using Microsoft.Extensions.Configuration;
+using Microsoft.VisualStudio.Services.Account;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
@@ -12,7 +15,6 @@ namespace RepositoryLayer.Service
 {
     public class NotesRL : INotesRL
     {
-       
         private readonly FundooContext fundooContext;
         private readonly IConfiguration _Toolsettings;
         public NotesRL(FundooContext fundooContext, IConfiguration _Toolsettings)
@@ -20,8 +22,7 @@ namespace RepositoryLayer.Service
             this.fundooContext = fundooContext;
             this._Toolsettings = _Toolsettings;
         }
-
-        public NotesEntity NotesCreation(NotesCreation notesCreation , long userId)
+        public NotesEntity NotesCreation(NotesCreation notesCreation, long userId)
         {
             try
             {
@@ -48,7 +49,6 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
-
         public NotesEntity UpdateNotes(UpdateNotes updateNotes, long notesId)
         {
             try
@@ -66,7 +66,6 @@ namespace RepositoryLayer.Service
                     int result = fundooContext.SaveChanges();
                     return note;
                 }
-
                 else
                     return null;
             }
@@ -108,6 +107,120 @@ namespace RepositoryLayer.Service
                 {
 
                     return result;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity ArchiveNotes(long userId, long notesId)
+        {
+            try
+            {
+                NotesEntity note = this.fundooContext.Notes.FirstOrDefault(x => x.Id == userId && x.NotesId == notesId);
+                if (note != null)
+                {
+                    bool checkArchive = note.IsArchieve;
+                    if (checkArchive == true)
+                    {
+                        note.IsArchieve = false;
+                    }
+
+                    if (checkArchive == false)
+                    {
+                        note.IsArchieve = true;
+                    }
+
+                    this.fundooContext.SaveChanges();
+                    return note;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity PinnedNotes(long userId, long notesId)
+        {
+            try
+            {
+                NotesEntity note = this.fundooContext.Notes.FirstOrDefault(x => x.Id == userId && x.NotesId == notesId);
+                if (note != null)
+                {
+                    bool checkPin = note.IsPinned;
+                    if (checkPin == true)
+                    {
+                        note.IsPinned = false;
+                    }
+
+                    if (checkPin == false)
+                    {
+                        note.IsPinned = true;
+                    }
+                    this.fundooContext.SaveChanges();
+                    return note;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity ColorNotes(long userId, long notesId, string color)
+        {
+            try
+            {
+                NotesEntity note = this.fundooContext.Notes.FirstOrDefault(x => x.Id == userId && x.NotesId == notesId);
+                if (note != null)
+                {
+                    note.Color = color;
+                    fundooContext.Notes.Update(note);
+                    this.fundooContext.SaveChanges();
+                    return note;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity TrashNotes(long userId, long notesId)
+        {
+            try
+            {
+                NotesEntity note = this.fundooContext.Notes.FirstOrDefault(x => x.Id == userId && x.NotesId == notesId);
+                if (note != null)
+                {
+                    bool checkTrash = note.IsTrash;
+                    if (checkTrash == true)
+                    {
+                        note.IsTrash = false;
+                    }
+
+                    if (checkTrash == false)
+                    {
+                        note.IsTrash = true;
+                    }
+
+                    this.fundooContext.SaveChanges();
+                    return note;
                 }
                 else
                 {
