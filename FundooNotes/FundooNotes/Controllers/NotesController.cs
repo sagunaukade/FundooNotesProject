@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,9 @@ namespace FundooNotes.Controllers
     public class NotesController : ControllerBase
     {
         private readonly INotesBL noteBL;
+        // private readonly IConfiguration _config;
+
+
         //Constructor
         public NotesController(INotesBL noteBL)
         {
@@ -93,7 +97,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpPut("Archive")]
+        [HttpPut("IsArchive")]
         public IActionResult ArchiveNotes(long userId, long notesId)
         {
             try
@@ -110,7 +114,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpPut("Pin")]
+        [HttpPut("IsPin")]
         public IActionResult PinnedNotes(long userId, long notesId)
         {
             try
@@ -144,7 +148,7 @@ namespace FundooNotes.Controllers
             }
         }
         [Authorize]
-        [HttpPut("Trash")]
+        [HttpPut("IsTrash")]
         public IActionResult TrashNotes(long userId, long notesId)
         {
             try
@@ -160,6 +164,33 @@ namespace FundooNotes.Controllers
                 throw;
             }
         }
+        [HttpPost("UploadImage")]
+        public IActionResult UploadImage(long notesId, IFormFile image)
+        {
+            try
+            {
+                // Authorise user by userId
+                var userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
+                var result = this.noteBL.UploadImage(notesId, image);
+                if (result != null)
+                {
+                    return this.Ok(new { Success = true, message = "Image Uploaded Successfully", data = result });
 
+
+
+                }
+                else
+                {
+                    return this.BadRequest(new { Success = false, message = "Image Upload Failed ! Try Again " });
+
+
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+
+        }
     }
 }

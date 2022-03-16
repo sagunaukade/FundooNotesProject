@@ -18,9 +18,7 @@ namespace RepositoryLayer.Interface
         public NotesEntity PinnedNotes(long userId, long notesId);
         public NotesEntity ColorNotes(long userId, long notesId, string color);
         public NotesEntity TrashNotes(long userId, long notesId);
-       // public NotesEntity ImageUpload(long userId, long notesId, IFormFile image);
-
-
+        public NotesEntity UploadImage(long notesId, IFormFile image);
 
     }
 }

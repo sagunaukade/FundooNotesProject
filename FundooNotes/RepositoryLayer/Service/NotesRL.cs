@@ -1,8 +1,8 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using CommonLayer.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.Services.Account;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
@@ -16,11 +16,13 @@ namespace RepositoryLayer.Service
     public class NotesRL : INotesRL
     {
         private readonly FundooContext fundooContext;
-        private readonly IConfiguration _Toolsettings;
-        public NotesRL(FundooContext fundooContext, IConfiguration _Toolsettings)
+        private readonly IConfiguration configuration;
+
+
+        public NotesRL(FundooContext fundooContext, IConfiguration configuration)
         {
             this.fundooContext = fundooContext;
-            this._Toolsettings = _Toolsettings;
+            this.configuration = configuration;
         }
         public NotesEntity NotesCreation(NotesCreation notesCreation, long userId)
         {
@@ -221,6 +223,42 @@ namespace RepositoryLayer.Service
 
                     this.fundooContext.SaveChanges();
                     return note;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity UploadImage(long notesId, IFormFile image)
+        {
+            try
+            {
+                // Fetch All the details with the given noteId and userId
+                var note = this.fundooContext.Notes.FirstOrDefault(n => n.NotesId == notesId);
+                if (note != null)
+                {
+                    Account acc = new Account(configuration["Cloudinary:CloudName"], configuration["Cloudinary:ApiKey"], configuration["Cloudinary:ApiSecret"]);
+                    Cloudinary cloud = new Cloudinary(acc);
+                    var imagePath = image.OpenReadStream();
+                    var uploadParams = new ImageUploadParams()
+                    {
+                        File = new FileDescription(image.FileName, imagePath),
+                    };
+                    var uploadResult = cloud.Upload(uploadParams);
+                    note.Image = image.FileName;
+                    this.fundooContext.Notes.Update(note);
+                    int upload = this.fundooContext.SaveChanges();
+                    if (upload > 0)
+                        return note;
+                    else
+                    {
+                        return null;
+                    }
                 }
                 else
                 {
