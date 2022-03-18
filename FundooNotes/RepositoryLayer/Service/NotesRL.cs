@@ -238,7 +238,7 @@ namespace RepositoryLayer.Service
         {
             try
             {
-                // Fetch All the details with the given noteId and userId
+                // Fetch All the details with the given noteId 
                 var note = this.fundooContext.Notes.FirstOrDefault(n => n.NotesId == notesId);
                 if (note != null)
                 {
