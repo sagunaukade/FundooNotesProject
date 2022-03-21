@@ -6,9 +6,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using RepositoryLayer.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FundooNotes.Controllers
@@ -17,15 +20,18 @@ namespace FundooNotes.Controllers
     [ApiController]
     public class NotesController : ControllerBase
     {
+        private readonly IMemoryCache memoryCache;
+        private readonly IDistributedCache distributedCache;
         private readonly INotesBL noteBL;
         // private readonly IConfiguration _config;
 
 
         //Constructor
-        public NotesController(INotesBL noteBL)
+        public NotesController(INotesBL noteBL, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             this.noteBL = noteBL;
-
+            this.memoryCache = memoryCache;
+            this.distributedCache = distributedCache;
         }
         [Authorize]
         [HttpPost("Create")]
@@ -44,6 +50,33 @@ namespace FundooNotes.Controllers
             {
                 return this.BadRequest(new { success = false, Message = e.Message });
             }
+        }
+
+       
+        [HttpGet("redis")]
+        public async Task<IActionResult> GetAllNotesUsingRedisCache()
+        {
+            var cacheKey = "NotesList";
+            string serializedNotesList;
+            var NotesList = new List<NotesEntity>();
+            var redisNotesList = await distributedCache.GetAsync(cacheKey);
+            if (redisNotesList != null)
+            {
+                serializedNotesList = Encoding.UTF8.GetString(redisNotesList);
+                NotesList = JsonConvert.DeserializeObject<List<NotesEntity>>(serializedNotesList);
+            }
+            else
+            {
+                long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
+                NotesList = (List<NotesEntity>) this.noteBL.RetrieveAllNotes(userId);
+                serializedNotesList = JsonConvert.SerializeObject(NotesList);
+                redisNotesList = Encoding.UTF8.GetBytes(serializedNotesList);
+                var options = new DistributedCacheEntryOptions()
+                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                await distributedCache.SetAsync(cacheKey, redisNotesList, options);
+            }
+            return Ok(NotesList);
         }
         [Authorize]
         [HttpPost("Update")]
@@ -181,7 +214,7 @@ namespace FundooNotes.Controllers
                 }
                 else
                 {
-                    return this.BadRequest(new { Success = false, message = "Image Upload Failed ! Try Again " });
+                    return this.BadRequest(new { Success = false, message = "Image Upload Failed " });
 
 
                 }

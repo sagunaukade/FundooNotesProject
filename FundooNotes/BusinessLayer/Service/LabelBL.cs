@@ -61,7 +61,21 @@ namespace BusinessLayer.Service
             }
 
         }
+        public IEnumerable<LabelEntity> GetAllLabelbyUserid(long userId)
+        {
+            try
+            {
+
+                return labelRL.GetAllLabelbyUserid(userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
     }
-    }
+}
     
 

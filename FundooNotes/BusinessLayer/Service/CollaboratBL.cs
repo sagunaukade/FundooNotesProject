@@ -40,21 +40,21 @@ namespace BusinessLayer.Service
             }
 
         }
-        public IEnumerable<CollaboratEntity> GetByNoteId(long userId, long notesId)
+        public IEnumerable<CollaboratEntity> GetAllCollab()
         {
-
-
             try
-                {
-                    return collabratorRL.GetByNoteId(userId, notesId);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-            
-
+            {
+                return collabratorRL.GetAllCollab();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
+
+        
+    
+
         

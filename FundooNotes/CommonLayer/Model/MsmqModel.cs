@@ -57,7 +57,6 @@ namespace CommonLayer.Model
             {
                 messageQueue.BeginReceive();
             }
-
         }
     }
 }

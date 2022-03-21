@@ -69,13 +69,11 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
-       
-        public IEnumerable<CollaboratEntity> GetByNoteId(long userId, long notesId)
-        {
 
+        public IEnumerable<CollaboratEntity> GetAllCollab()
+        {
             try
             {
-                //Fetch All the details from Collab Table
                 var collabs = fundooContext.Collab.ToList();
                 if (collabs != null)
                 {
@@ -90,5 +88,4 @@ namespace RepositoryLayer.Service
             }
         }
     }
-    
 }

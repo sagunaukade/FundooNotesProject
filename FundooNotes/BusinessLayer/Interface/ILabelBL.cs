@@ -10,6 +10,6 @@ namespace BusinessLayer.Interface
         public LabelEntity AddLabel(string labelName, long userId, long noteId);
         public LabelEntity UpdateLabel(string labelName,  long labelId, long userId);
         public bool DeleteLabel(long labelId);
-
+        public IEnumerable<LabelEntity> GetAllLabelbyUserid(long userId);
     }
 }
