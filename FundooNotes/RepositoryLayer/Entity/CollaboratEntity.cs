@@ -11,7 +11,7 @@ namespace RepositoryLayer.Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-
+        //getter and setter
         public long CollaboratId { get; set; }
         public string CollaboratEmail { get; set; }
         [ForeignKey("user")]  

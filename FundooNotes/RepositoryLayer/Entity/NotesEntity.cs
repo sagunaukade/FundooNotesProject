@@ -10,6 +10,7 @@ namespace RepositoryLayer.Entity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        //getter and setter
         public long NotesId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }

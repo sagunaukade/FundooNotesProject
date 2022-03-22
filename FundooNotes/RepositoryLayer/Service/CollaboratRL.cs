@@ -11,9 +11,10 @@ namespace RepositoryLayer.Service
 {
     public class CollaboratRL : ICollaboratRL
     {
+        //instance variable
         private readonly FundooContext fundooContext;
         private readonly IConfiguration _appSettings;
-
+        //constructor
         public CollaboratRL(FundooContext fundooContext, IConfiguration _appSettings)
         {
             this.fundooContext = fundooContext;

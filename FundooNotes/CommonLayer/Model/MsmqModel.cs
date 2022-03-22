@@ -12,6 +12,7 @@ namespace CommonLayer.Model
         MessageQueue messageQueue = new MessageQueue();
         public void Sender(string token)
         {
+            //path msmq server
             messageQueue.Path = @".\private$\Tokens";
             try
             {

@@ -15,10 +15,11 @@ namespace RepositoryLayer.Service
 {
     public class NotesRL : INotesRL
     {
+        //Instance variable
         private readonly FundooContext fundooContext;
         private readonly IConfiguration configuration;
 
-
+        //constructor
         public NotesRL(FundooContext fundooContext, IConfiguration configuration)
         {
             this.fundooContext = fundooContext;
@@ -64,6 +65,7 @@ namespace RepositoryLayer.Service
                     note.Image = updateNotes.Image;
                     note.ModifiedAt = updateNotes.ModifiedAt;
                     note.Id = notesId;
+                    //update database for given id
                     fundooContext.Notes.Update(note);
                     int result = fundooContext.SaveChanges();
                     return note;
@@ -84,6 +86,7 @@ namespace RepositoryLayer.Service
 
                 if (result != null)
                 {
+                    //remove note from database
                     fundooContext.Notes.Remove(result);
                     fundooContext.SaveChanges();
 
@@ -238,7 +241,7 @@ namespace RepositoryLayer.Service
         {
             try
             {
-                // Fetch All the details with the given noteId 
+                // Fetching All the details with the given noteId 
                 var note = this.fundooContext.Notes.FirstOrDefault(n => n.NotesId == notesId);
                 if (note != null)
                 {

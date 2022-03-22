@@ -10,8 +10,9 @@ namespace RepositoryLayer.Service
 {
     public class LabelRL : ILabelRL
     {
-
+        //instance variable
         private readonly FundooContext fundooContext;
+        //constructor
         public LabelRL(FundooContext fundooContext)
         {
             this.fundooContext = fundooContext;
@@ -25,6 +26,7 @@ namespace RepositoryLayer.Service
                 label.LabelName = labelName;
                 label.NoteId = noteId;
                 label.Id = userId;
+                //add label for given id
                 fundooContext.Label.Add(label);
                 int result = fundooContext.SaveChanges();
                 if (result > 0)
@@ -72,6 +74,7 @@ namespace RepositoryLayer.Service
                 var result = fundooContext.Label.Where(e => e.LabelId == labelId).FirstOrDefault();
                 if (result != null)
                 {
+                    //remove label from database
                     fundooContext.Label.Remove(result);
                     fundooContext.SaveChanges();
                     return true;
@@ -92,6 +95,7 @@ namespace RepositoryLayer.Service
         {
             try
             {
+                //getting all label details for given userid
                 var result = fundooContext.Label.Where(e => e.Id == userId).ToList();
                 if (result != null)
                 {
