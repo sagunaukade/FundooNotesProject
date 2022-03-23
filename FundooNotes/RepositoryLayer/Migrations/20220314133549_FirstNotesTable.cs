@@ -1,10 +1,17 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace RepositoryLayer.Migrations
+﻿namespace RepositoryLayer.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
+
+    /// <summary>
+    /// first note table
+    /// </summary>
     public partial class FirstNotesTable : Migration
     {
+        /// <summary>
+        /// up
+        /// </summary>
+        /// <param name="migrationBuilder">migration builder</param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -42,6 +49,10 @@ namespace RepositoryLayer.Migrations
                 column: "Id");
         }
 
+        /// <summary>
+        /// down
+        /// </summary>
+        /// <param name="migrationBuilder">migration builder</param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

@@ -56,13 +56,18 @@ namespace FundooNotes.Controllers
         [HttpGet("redis")]
         public async Task<IActionResult> GetAllNotesUsingRedisCache()
         {
+            //set the key internally 
             var cacheKey = "NotesList";
             string serializedNotesList;
+            //initialize empty list of notes
             var NotesList = new List<NotesEntity>();
+            //access the distributed object to get data from redis using key "NotesList"
             var redisNotesList = await distributedCache.GetAsync(cacheKey);
+            //if the key value in redis then convert list of notes
             if (redisNotesList != null)
             {
                 serializedNotesList = Encoding.UTF8.GetString(redisNotesList);
+                //Converts the string to an object 
                 NotesList = JsonConvert.DeserializeObject<List<NotesEntity>>(serializedNotesList);
             }
             else
@@ -70,10 +75,12 @@ namespace FundooNotes.Controllers
                 long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
                 NotesList = (List<NotesEntity>) this.noteBL.RetrieveAllNotes(userId);
                 serializedNotesList = JsonConvert.SerializeObject(NotesList);
+                //Converts the string to a Byte Array This array will be stored in Redis
                 redisNotesList = Encoding.UTF8.GetBytes(serializedNotesList);
                 var options = new DistributedCacheEntryOptions()
                     .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
                     .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                //set the cache
                 await distributedCache.SetAsync(cacheKey, redisNotesList, options);
             }
             return Ok(NotesList);

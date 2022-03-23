@@ -1,32 +1,47 @@
-﻿using RepositoryLayer.Context;
-using RepositoryLayer.Entity;
-using RepositoryLayer.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RepositoryLayer.Service
+﻿namespace RepositoryLayer.Service
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using RepositoryLayer.Context;
+    using RepositoryLayer.Entity;
+    using RepositoryLayer.Interface;
+
+    /// <summary>
+    /// Label class
+    /// </summary>
     public class LabelRL : ILabelRL
     {
-        //instance variable
+        /// <summary>
+        /// instance variable
+        /// </summary>
         private readonly FundooContext fundooContext;
-        //constructor
+
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="fundooContext"> the fundoo context</param>
         public LabelRL(FundooContext fundooContext)
         {
             this.fundooContext = fundooContext;
         }
+
+        /// <summary>
+        /// method for create new label
+        /// </summary>
+        /// <param name="labelName">the label name</param>
+        /// <param name="userId">the user id</param>
+        /// <param name="noteId">the note id</param>
+        /// <returns>Add label</returns>
         public LabelEntity AddLabel(string labelName, long userId, long noteId)
         {
             try
             {
-
                 LabelEntity label = new LabelEntity();
                 label.LabelName = labelName;
                 label.NoteId = noteId;
                 label.Id = userId;
-                //add label for given id
                 fundooContext.Label.Add(label);
                 int result = fundooContext.SaveChanges();
                 if (result > 0)
@@ -36,7 +51,6 @@ namespace RepositoryLayer.Service
                 else
                 {
                     return null;
-
                 }
             }
             catch (Exception)
@@ -44,14 +58,21 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// method for update label
+        /// </summary>
+        /// <param name="labelName">the label name</param>
+        /// <param name="labelId">the label id</param>
+        /// <param name="userId">the user id</param>
+        /// <returns>update label</returns>
         public LabelEntity UpdateLabel(string labelName,  long labelId, long userId)
         {
             try
             {
-                var result = fundooContext.Label.Where(e => e.LabelId == labelId && e.Id ==userId).FirstOrDefault();
+                var result = fundooContext.Label.Where(e => e.LabelId == labelId && e.Id == userId).FirstOrDefault();
                 if (result != null)
                 {
-                    //  LabelEntity label = new LabelEntity();
                     result.LabelName = labelName;
                     fundooContext.Label.Update(result);
                     fundooContext.SaveChanges();
@@ -67,6 +88,12 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// method for delete label
+        /// </summary>
+        /// <param name="labelId">the label id</param>
+        /// <returns>delete label</returns>
         public bool DeleteLabel(long labelId)
         {
             try
@@ -74,7 +101,6 @@ namespace RepositoryLayer.Service
                 var result = fundooContext.Label.Where(e => e.LabelId == labelId).FirstOrDefault();
                 if (result != null)
                 {
-                    //remove label from database
                     fundooContext.Label.Remove(result);
                     fundooContext.SaveChanges();
                     return true;
@@ -82,20 +108,23 @@ namespace RepositoryLayer.Service
                 else
                 {
                     return false;
-
                 }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        /// <summary>
+        /// method for get all label by user id
+        /// </summary>
+        /// <param name="userId">the user id</param>
+        /// <returns>label by user id</returns>
         public IEnumerable<LabelEntity> GetAllLabelbyUserid(long userId)
         {
             try
             {
-                //getting all label details for given userid
                 var result = fundooContext.Label.Where(e => e.Id == userId).ToList();
                 if (result != null)
                 {
@@ -104,12 +133,10 @@ namespace RepositoryLayer.Service
                 else
                 {
                     return null;
-
                 }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

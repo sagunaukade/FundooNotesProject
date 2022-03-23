@@ -1,25 +1,46 @@
-﻿using Microsoft.Extensions.Configuration;
-using RepositoryLayer.Context;
-using RepositoryLayer.Entity;
-using RepositoryLayer.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RepositoryLayer.Service
+﻿namespace RepositoryLayer.Service
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using Microsoft.Extensions.Configuration;
+    using RepositoryLayer.Context;
+    using RepositoryLayer.Entity;
+    using RepositoryLayer.Interface;
+
+    /// <summary>
+    /// collaborator class
+    /// </summary>
     public class CollaboratRL : ICollaboratRL
     {
-        //instance variable
+        /// <summary>
+        /// instance variables
+        /// </summary>
         private readonly FundooContext fundooContext;
-        private readonly IConfiguration _appSettings;
-        //constructor
-        public CollaboratRL(FundooContext fundooContext, IConfiguration _appSettings)
+
+        /// <summary>
+        /// instance variable
+        /// </summary>
+        private readonly IConfiguration appSettings;
+
+        /// <summary>
+        /// initialize new instance of the <see cref="CollaboratRL"/> class.</summary>
+        /// <param name="fundooContext"> the fundooContext</param>
+        /// <param name="appSettings">the appSettings</param>
+        public CollaboratRL(FundooContext fundooContext, IConfiguration appSettings)
         {
             this.fundooContext = fundooContext;
-            this._appSettings = _appSettings;
+            this.appSettings = appSettings;
         }
+
+        /// <summary>
+        /// method for add collaborator with register user
+        /// </summary>
+        /// <param name="email">the email</param>
+        /// <param name="userId">the user id</param>
+        /// <param name="noteId">the note id</param>
+        /// <returns>add collaborator</returns>
         public CollaboratEntity AddCollab(string email, long userId, long noteId)
         {
             try
@@ -39,7 +60,6 @@ namespace RepositoryLayer.Service
                 else
                 {
                     return null;
-
                 }
             }
             catch (Exception)
@@ -47,6 +67,13 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// method for delete collab
+        /// </summary>
+        /// <param name="userId">the user id</param>
+        /// <param name="collabid">the collaborator id</param>
+        /// <returns>delete collaborator</returns>
         public bool DeleteCollab(long userId, long collabid)
         {
             try
@@ -66,11 +93,14 @@ namespace RepositoryLayer.Service
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
 
+        /// <summary>
+        /// method for get all collaborator in database
+        /// </summary>
+        /// <returns>get all collaborator</returns>
         public IEnumerable<CollaboratEntity> GetAllCollab()
         {
             try
@@ -81,7 +111,9 @@ namespace RepositoryLayer.Service
                     return collabs;
                 }
                 else
+                {
                     return null;
+                }
             }
             catch (Exception)
             {

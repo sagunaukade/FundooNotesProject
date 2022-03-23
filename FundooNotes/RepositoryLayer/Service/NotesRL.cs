@@ -1,30 +1,45 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using CommonLayer.Model;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using RepositoryLayer.Context;
-using RepositoryLayer.Entity;
-using RepositoryLayer.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RepositoryLayer.Service
+﻿namespace RepositoryLayer.Service
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using CloudinaryDotNet;
+    using CloudinaryDotNet.Actions;
+    using CommonLayer.Model;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
+    using RepositoryLayer.Context;
+    using RepositoryLayer.Entity;
+    using RepositoryLayer.Interface;
+
+    /// <summary>
+    /// notes class
+    /// </summary>
     public class NotesRL : INotesRL
     {
-        //Instance variable
+        /// <summary>
+        /// instance variable
+        /// </summary>
         private readonly FundooContext fundooContext;
         private readonly IConfiguration configuration;
 
-        //constructor
+        /// <summary>
+        /// instance a new instance of the <see cref="NotesRL"/> class.</summary>>
+        /// <param name="fundooContext">the fundoo context</param>
+        /// <param name="configuration">the configuration</param>
         public NotesRL(FundooContext fundooContext, IConfiguration configuration)
         {
             this.fundooContext = fundooContext;
             this.configuration = configuration;
         }
+
+        /// <summary>
+        /// method for create notes in database
+        /// </summary>
+        /// <param name="notesCreation">the note creation</param>
+        /// <param name="userId">the user Id</param>
+        /// <returns>create notes</returns>
         public NotesEntity NotesCreation(NotesCreation notesCreation, long userId)
         {
             try
@@ -43,15 +58,26 @@ namespace RepositoryLayer.Service
                 fundooContext.Notes.Add(newNotes);
                 int result = fundooContext.SaveChanges();
                 if (result > 0)
+                {
                     return newNotes;
+                }
                 else
+                {
                     return null;
+                }
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
+        /// <summary>
+        /// method for update notes in database
+        /// </summary>
+        /// <param name="updateNotes">the update notes</param>
+        /// <param name="notesId">the notes id</param>
+        /// <returns>update notes</returns>
         public NotesEntity UpdateNotes(UpdateNotes updateNotes, long notesId)
         {
             try
@@ -65,19 +91,28 @@ namespace RepositoryLayer.Service
                     note.Image = updateNotes.Image;
                     note.ModifiedAt = updateNotes.ModifiedAt;
                     note.Id = notesId;
-                    //update database for given id
+                    ///update database for given notes id
                     fundooContext.Notes.Update(note);
                     int result = fundooContext.SaveChanges();
                     return note;
                 }
                 else
+                {
                     return null;
+                }
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
+        /// <summary>
+        /// method for delete notes
+        /// </summary>
+        /// <param name="id">the id</param>
+        /// <param name="noteId">the note Id</param>
+        /// <returns>delete notes</returns>
         public bool DeleteNotes(long id, long noteId)
         {
             try
@@ -86,7 +121,6 @@ namespace RepositoryLayer.Service
 
                 if (result != null)
                 {
-                    //remove note from database
                     fundooContext.Notes.Remove(result);
                     fundooContext.SaveChanges();
 
@@ -102,7 +136,7 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
-        // methods for retrieve notes details by note id 
+
         public IEnumerable<NotesEntity> RetrieveAllNotes(long userId)
         {
             try
@@ -110,7 +144,6 @@ namespace RepositoryLayer.Service
                 var result = fundooContext.Notes.Where(e => e.Id == userId).ToList();
                 if (result != null)
                 {
-
                     return result;
                 }
                 else
@@ -123,6 +156,13 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// archive notes
+        /// </summary>
+        /// <param name="userId">user Id</param>
+        /// <param name="notesId">note Id</param>
+        /// <returns>archive notes</returns>
         public NotesEntity ArchiveNotes(long userId, long notesId)
         {
             try
@@ -154,6 +194,13 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// pinned
+        /// </summary>
+        /// <param name="userId">user Id</param>
+        /// <param name="notesId">notes Id</param>
+        /// <returns>pinned notes</returns>
         public NotesEntity PinnedNotes(long userId, long notesId)
         {
             try
@@ -184,6 +231,14 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// color
+        /// </summary>
+        /// <param name="userId">user Id</param>
+        /// <param name="notesId">note Id</param>
+        /// <param name="color">color</param>
+        /// <returns>color notes</returns>
         public NotesEntity ColorNotes(long userId, long notesId, string color)
         {
             try
@@ -206,6 +261,13 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// trash
+        /// </summary>
+        /// <param name="userId">user Id</param>
+        /// <param name="notesId">notes Id</param>
+        /// <returns>trash</returns>
         public NotesEntity TrashNotes(long userId, long notesId)
         {
             try
@@ -237,11 +299,17 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// upload image
+        /// </summary>
+        /// <param name="notesId">notes Id</param>
+        /// <param name="image">image</param>
+        /// <returns>upload image</returns>
         public NotesEntity UploadImage(long notesId, IFormFile image)
         {
             try
             {
-                // Fetching All the details with the given noteId 
                 var note = this.fundooContext.Notes.FirstOrDefault(n => n.NotesId == notesId);
                 if (note != null)
                 {

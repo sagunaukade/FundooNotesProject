@@ -1,33 +1,52 @@
-﻿using CommonLayer.Model;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using RepositoryLayer.Context;
-using RepositoryLayer.Entity;
-using RepositoryLayer.Interface;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-
-namespace RepositoryLayer.Service
+﻿namespace RepositoryLayer.Service
 {
+    using System;
+    using System.Text;
+    using RepositoryLayer.Entity;
+    using RepositoryLayer.Interface;
+    using System.Collections.Generic;
+    using System.IdentityModel.Tokens;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.IO;
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Security.Cryptography;
+    using CommonLayer.Model;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.IdentityModel.Tokens;
+    using RepositoryLayer.Context;
+
+    /// <summary>
+    /// user RL class
+    /// </summary>
     public class UserRL : IUserRL
     {
-        //Initialize Instance Variables
+        /// <summary>
+        /// Fundoo Context
+        /// </summary>
         private readonly FundooContext fundooContext;
-        private readonly IConfiguration _Toolsettings;
-        //Constructor
-        public UserRL(FundooContext fundooContext, IConfiguration _Toolsettings)
+        /// <summary>
+        /// toolsettings
+        /// </summary>
+        private readonly IConfiguration Toolsettings;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="fundooContext">the fundoo context</param>
+        /// <param name="_Toolsettings">the toolsettings</param>
+        
+        public UserRL(FundooContext fundooContext, IConfiguration Toolsettings)
         {
             this.fundooContext = fundooContext;
-            this._Toolsettings = _Toolsettings;
-
+            this.Toolsettings = Toolsettings;
         }
+
+        /// <summary>
+        /// Method for get gmail
+        /// </summary>
+        /// <param name="Email">email</param>
+        /// <returns>email</returns>
         public UserEntity GetEmail(string Email)
         {
             var result = fundooContext.User.FirstOrDefault(e => e.Email == Email);
@@ -35,7 +54,11 @@ namespace RepositoryLayer.Service
             return result;
         }
 
-
+        /// <summary>
+        /// method for user registration
+        /// </summary>
+        /// <param name="User">user registration</param>
+        /// <returns>user details</returns>
         public UserEntity Registration(UserRegistration User)
         {
             try
@@ -44,8 +67,6 @@ namespace RepositoryLayer.Service
                 userEntity.FirstName = User.FirstName;
                 userEntity.LastName = User.LastName;
                 userEntity.Email = User.Email;
-                // userEntity.Password = User.Password;
-                // userentity.Password = EncryptPassword(User.Password);
                 userEntity.Password = EncryptPassword(User.Password);
                 fundooContext.Add(userEntity);
                 int result = fundooContext.SaveChanges();
@@ -53,14 +74,18 @@ namespace RepositoryLayer.Service
                     return userEntity;
                 else
                     return null;
-
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        /// <summary>
+        /// method for encrypt password
+        /// </summary>
+        /// <param name="Password"> the user password</param>
+        /// <returns>encrypt password</returns>
        public string EncryptPassword(string Password)
         {
             try
@@ -75,15 +100,21 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// method for user login 
+        /// </summary>
+        /// <param name="userLogin"> the user login</param>
+        /// <returns>user login</returns>
         public string Login(UserLogin userLogin)
         {
             try
             {
-                // if Email and password is empty return null. 
                 if (string.IsNullOrEmpty(userLogin.Email) || string.IsNullOrEmpty(userLogin.Password))
                 {
                     return null;
                 }
+
                 var user = fundooContext.User.Where(x => x.Email == userLogin.Email && x.Password == userLogin.Password).FirstOrDefault();
                 string dcryptPass = this.EncryptPassword(userLogin.Password);
 
@@ -91,47 +122,49 @@ namespace RepositoryLayer.Service
                 {
                     string token = GenerateSecurityToken(user.Email, user.Id);
                     return token;
-
                 }
                 return null;
-                //string token = GenerateSecurityToken(user.Email, user.Id);
-                //return token;
             }
             catch (Exception)
             {
-
                 throw;
             }
-
         }
-        private string GenerateSecurityToken(string Email, long Id)
+
+        /// <summary>
+        /// method for JWT token for login authentication with email and id
+        /// </summary>
+        /// <param name="Email"> the email</param>
+        /// <param name="Id">the id</param>
+        /// <returns>Token</returns>
+        public string GenerateSecurityToken(string Email, long Id)
         {
-            //header of jwt token
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Toolsettings["Jwt:secretkey"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Toolsettings["Jwt:secretkey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            //payload of jwt token
-            var claims = new[] {
+            var claims = new[]
+            {
                 new Claim(ClaimTypes.Email,Email),
                 new Claim("Id",Id.ToString())
             };
-            //signature of jwt token
-            var token = new JwtSecurityToken(_Toolsettings["Jwt:Issuer"],
-              _Toolsettings["Jwt:Issuer"],
+            var token = new JwtSecurityToken(Toolsettings["Jwt:Issuer"],
+              Toolsettings["Jwt:Issuer"],
               claims,
               expires: DateTime.Now.AddMinutes(60),
               signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
-        public string ForgetPassword(String email)
+
+        /// <summary>
+        /// method for user forget password
+        /// </summary>
+        /// <param name="email">the email</param>
+        /// <returns>Password change</returns>
+        public string ForgetPassword(string email)
         {
-            //Checking email exit or not
             var user = fundooContext.User.Where(x => x.Email == email).FirstOrDefault();
             if (user != null)
             {
-                //for token generating
                 var token = GenerateSecurityToken(user.Email, user.Id);
-                //Passing token to msmq 
                 new MsmqModel().Sender(token);
                 return token;
             }
@@ -140,16 +173,22 @@ namespace RepositoryLayer.Service
                 return null;
             }
         }
+
+        /// <summary>
+        /// method for reset password using token
+        /// </summary>
+        /// <param name="email">the email</param>
+        /// <param name="password">the password</param>
+        /// <param name="confirmpassword">the confirm password</param>
+        /// <returns>reset password</returns>
         public bool ResetPassword(string email, string password, string confirmpassword)
         {
             try
             {
-                //checking new pwd matches with confirm pwd
                 if (password.Equals(confirmpassword))
                 {
                     var user = fundooContext.User.Where(x => x.Email == email).FirstOrDefault();
                     user.Password = confirmpassword;
-                    //change old pwd to new pwd
                     fundooContext.SaveChanges();
                     return true;
                 }
@@ -157,11 +196,9 @@ namespace RepositoryLayer.Service
                 {
                     return false;
                 }
-
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

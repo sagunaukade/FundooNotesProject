@@ -1,9 +1,16 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace RepositoryLayer.Migrations
+﻿namespace RepositoryLayer.Migrations
 {
+    using Microsoft.EntityFrameworkCore.Migrations;
+
+    /// <summary>
+    /// saguna
+    /// </summary>
     public partial class Saguna : Migration
     {
+        /// <summary>
+        /// up
+        /// </summary>
+        /// <param name="migrationBuilder">migration builder</param>
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -44,6 +51,10 @@ namespace RepositoryLayer.Migrations
                 column: "NoteId");
         }
 
+        /// <summary>
+        /// down
+        /// </summary>
+        /// <param name="migrationBuilder">migration builder</param>
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
