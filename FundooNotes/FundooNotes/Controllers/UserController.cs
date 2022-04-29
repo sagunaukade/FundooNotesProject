@@ -10,10 +10,10 @@ namespace FundooNotes.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserBL userBL;
+
         public UserController(IUserBL userBL)
         {
             this.userBL = userBL;
-
         }
         [HttpPost("Register")]
         public IActionResult Registration(UserRegistration user)

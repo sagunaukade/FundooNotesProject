@@ -18,9 +18,21 @@ namespace FundooNotes
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+                //.ConfigureWebHostDefaults(webBuilder =>
+                //{
+                //    webBuilder.UseStartup<Startup>();
+                //}).ConfigureLogging(builder =>
+                //{
+                //    builder.SetMinimumLevel(LogLevel.Trace);
+                //    builder.AddLog4Net("log4net.config");
+                //});
+        .ConfigureLogging(logging =>
+        {
+            logging.AddLog4Net(new Log4NetProviderOptions("log4net.config"));
+        })
+         .ConfigureWebHostDefaults(webBuilder =>
+         {
+            webBuilder.UseStartup<Startup>();
+         });
     }
 }
