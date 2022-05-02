@@ -11,8 +11,8 @@ namespace TicketingMicroservice.Controllers
     [ApiController]
     public class TicketController : ControllerBase
     {
-        private readonly IBusControl _bus;
-        public TicketController(IBusControl bus)
+        private readonly IBus _bus;
+        public TicketController(IBus bus)
         {
             _bus = bus;
         }

@@ -11,9 +11,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-//using TicketingMicroservice.MoviesApi.Middleware;
 
-namespace TicketingMicroservice
+namespace TicketProcessor.Microservice
 {
     public class Startup
     {
@@ -27,16 +26,11 @@ namespace TicketingMicroservice
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-
             services.AddMassTransit(x =>
             {
-                //TicketConsumer sending data
                 x.AddConsumer<TicketConsumer>();
                 x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
                 {
-                    //configure health checks for this bus instance
-                   // cfg.UseHealthCheck(provider);
                     cfg.Host(new Uri("rabbitmq://localhost"), h =>
                     {
                         h.Username("guest");
@@ -50,7 +44,9 @@ namespace TicketingMicroservice
                     });
                 }));
             });
+
             services.AddControllers();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,8 +58,6 @@ namespace TicketingMicroservice
             }
 
             app.UseHttpsRedirection();
-
-           // app.UseMiddleware(typeof(ExceptionHandlingMiddleware));
 
             app.UseRouting();
 
